@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>消费降级的真相 - 小红书内容工厂</title>
+    <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@200,400,600,700&f[]=satoshi@400,500,700&display=swap">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --accent: #ff6b6b;
+            --accent-glow: rgba(255, 107, 107, 0.3);
+            --accent-secondary: #4ecdc4;
+            --font-display: 'Clash Display', sans-serif;
+            --font-body: 'Satoshi', sans-serif;
+            --title-size: clamp(1.75rem, 5vw, 4rem);
+            --subtitle-size: clamp(1rem, 2.5vw, 1.5rem);
+            --body-size: clamp(0.875rem, 1.5vw, 1.125rem);
+            --small-size: clamp(0.75rem, 1.2vw, 0.9rem);
+            --slide-padding: clamp(1.5rem, 5vw, 4rem);
+            --content-gap: clamp(1rem, 2.5vw, 2rem);
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration-normal: 0.6s;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
+            height: 100%;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            height: 100%;
+            line-height: 1.6;
+        }
+
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-primary);
+        }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: var(--slide-padding);
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        /* Title Slide */
+        .title-slide {
+            background: 
+                radial-gradient(ellipse at 20% 80%, rgba(255, 107, 107, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(78, 205, 196, 0.1) 0%, transparent 50%),
+                var(--bg-primary);
+        }
+
+        .title-slide .slide-content {
+            align-items: center;
+            text-align: center;
+        }
+
+        .title-slide h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 6vw, 5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: var(--content-gap);
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .title-slide .subtitle {
+            font-size: var(--subtitle-size);
+            color: var(--text-secondary);
+            margin-bottom: calc(var(--content-gap) * 0.5);
+        }
+
+        .title-slide .date {
+            font-size: var(--small-size);
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        /* Content Slides */
+        .content-slide h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            font-weight: 600;
+            margin-bottom: var(--content-gap);
+            color: var(--text-primary);
+        }
+
+        .content-slide h2 .accent {
+            color: var(--accent);
+        }
+
+        .content-slide p {
+            font-size: var(--body-size);
+            color: var(--text-secondary);
+            margin-bottom: calc(var(--content-gap) * 0.75);
+            max-width: 800px;
+        }
+
+        .content-slide p.highlight {
+            color: var(--text-primary);
+            font-size: calc(var(--body-size) * 1.1);
+            border-left: 3px solid var(--accent);
+            padding-left: 1rem;
+        }
+
+        /* Trap Cards */
+        .trap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: clamp(0.75rem, 2vw, 1.5rem);
+            margin-top: var(--content-gap);
+        }
+
+        .trap-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: clamp(1rem, 2.5vw, 1.5rem);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s var(--ease-out-expo), box-shadow 0.3s;
+        }
+
+        .trap-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .trap-card .number {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            color: var(--accent);
+            opacity: 0.5;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .trap-card h3 {
+            font-family: var(--font-display);
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .trap-card p {
+            font-size: var(--small-size);
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        /* Quote Slide */
+        .quote-slide {
+            background: 
+                radial-gradient(ellipse at 50% 50%, rgba(255, 107, 107, 0.08) 0%, transparent 60%),
+                var(--bg-primary);
+        }
+
+        .quote-slide .slide-content {
+            align-items: center;
+            text-align: center;
+        }
+
+        .quote-slide blockquote {
+            font-family: var(--font-display);
+            font-size: clamp(1.25rem, 3.5vw, 2.5rem);
+            font-weight: 500;
+            line-height: 1.4;
+            max-width: 900px;
+            margin-bottom: var(--content-gap);
+        }
+
+        .quote-slide blockquote .accent {
+            color: var(--accent);
+        }
+
+        .quote-slide cite {
+            font-size: var(--body-size);
+            color: var(--text-secondary);
+            font-style: normal;
+        }
+
+        /* List Slides */
+        .point-list {
+            list-style: none;
+            margin-top: var(--content-gap);
+        }
+
+        .point-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: clamp(0.75rem, 1.5vw, 1rem);
+            font-size: var(--body-size);
+            color: var(--text-secondary);
+        }
+
+        .point-list li::before {
+            content: "→";
+            color: var(--accent);
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .point-list li strong {
+            color: var(--text-primary);
+        }
+
+        /* Investment Cards */
+        .investment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: clamp(0.75rem, 2vw, 1.5rem);
+            margin-top: var(--content-gap);
+        }
+
+        .investment-card {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(78, 205, 196, 0.05) 100%);
+            border-radius: 12px;
+            padding: clamp(1rem, 2.5vw, 1.5rem);
+            border: 1px solid rgba(78, 205, 196, 0.1);
+        }
+
+        .investment-card .icon {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            margin-bottom: 0.5rem;
+        }
+
+        .investment-card h3 {
+            font-family: var(--font-display);
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--accent-secondary);
+        }
+
+        .investment-card p {
+            font-size: var(--small-size);
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        /* Final Slide */
+        .final-slide {
+            background: 
+                radial-gradient(ellipse at 30% 70%, rgba(255, 107, 107, 0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 30%, rgba(78, 205, 196, 0.08) 0%, transparent 50%),
+                var(--bg-primary);
+        }
+
+        .final-slide .slide-content {
+            align-items: center;
+            text-align: center;
+        }
+
+        .final-slide h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            font-weight: 600;
+            margin-bottom: var(--content-gap);
+        }
+
+        .final-slide .final-message {
+            font-size: var(--subtitle-size);
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin-bottom: var(--content-gap);
+        }
+
+        .final-slide .question {
+            font-family: var(--font-display);
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            color: var(--accent);
+            margin-bottom: calc(var(--content-gap) * 0.5);
+        }
+
+        .final-slide .brand {
+            font-size: var(--small-size);
+            color: var(--text-secondary);
+            opacity: 0.6;
+            margin-top: calc(var(--content-gap) * 2);
+        }
+
+        /* Navigation */
+        .nav-dots {
+            position: fixed;
+            right: clamp(1rem, 2vw, 2rem);
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 100;
+        }
+
+        .nav-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s var(--ease-out-expo);
+        }
+
+        .nav-dot.active {
+            background: var(--accent);
+            transform: scale(1.3);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+            z-index: 1000;
+            transition: width 0.3s;
+        }
+
+        /* Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity var(--duration-normal) var(--ease-out-expo),
+                        transform var(--duration-normal) var(--ease-out-expo);
+        }
+
+        .slide.visible .reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal:nth-child(1) { transition-delay: 0.1s; }
+        .reveal:nth-child(2) { transition-delay: 0.2s; }
+        .reveal:nth-child(3) { transition-delay: 0.3s; }
+        .reveal:nth-child(4) { transition-delay: 0.4s; }
+        .reveal:nth-child(5) { transition-delay: 0.5s; }
+
+        /* Responsive */
+        @media (max-height: 700px) {
+            :root {
+                --slide-padding: clamp(1rem, 3vw, 2rem);
+                --content-gap: clamp(0.75rem, 1.5vw, 1rem);
+            }
+            .trap-grid, .investment-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .trap-grid, .investment-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-dots {
+                display: none;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reveal {
+                transition: opacity 0.3s ease;
+                transform: none;
+            }
+            html {
+                scroll-behavior: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <nav class="nav-dots" id="navDots"></nav>
+
+    <!-- Slide 1: Title -->
+    <section class="slide title-slide">
+        <div class="slide-content">
+            <p class="subtitle reveal">小红书内容工厂</p>
+            <h1 class="reveal">不是没钱了<br>是你终于醒了</h1>
+            <p class="date reveal">消费降级的真相 · 2026-03-01</p>
+        </div>
+    </section>
+
+    <!-- Slide 2: Opening -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">你有没有发现...</h2>
+            <p class="reveal">那些以前天天晒星巴克的人，现在开始自带保温杯了。</p>
+            <p class="reveal">那些张口闭口"轻奢"的闺蜜，现在拼夕夕用得比谁都6。</p>
+            <p class="reveal highlight">别急着嘲笑他们"没钱了"。<br>真相可能更扎心：他们可能比你更早看透了这场游戏。</p>
+        </div>
+    </section>
+
+    <!-- Slide 3: Three Traps -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">消费主义给你挖的<span class="accent">三个坑</span></h2>
+            <div class="trap-grid">
+                <div class="trap-card reveal">
+                    <div class="number">01</div>
+                    <h3>用价格定义身份</h3>
+                    <p>凡勃伦效应：炫耀性消费的怪象——东西越贵，买的人越多。但问题是，这个信号正在失效。</p>
+                </div>
+                <div class="trap-card reveal">
+                    <div class="number">02</div>
+                    <h3>用拥有替代体验</h3>
+                    <p>卡尼曼的研究证明：人对物质享乐的适应速度极快，但一次旅行的记忆能记十年。</p>
+                </div>
+                <div class="trap-card reveal">
+                    <div class="number">03</div>
+                    <h3>用消费解决情绪</h3>
+                    <p>"今天好累，买件新衣服奖励自己"——情绪消费是商家最爱你做的事。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 4: Quote -->
+    <section class="slide quote-slide">
+        <div class="slide-content">
+            <blockquote class="reveal">
+                消费主义告诉你：<span class="accent">拥有=幸福</span>。<br>
+                它不敢告诉你的是，这个等号在心理学上<span class="accent">根本不成立</span>。
+            </blockquote>
+        </div>
+    </section>
+
+    <!-- Slide 5: The Shift -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">消费降级不是穷<br>是<span class="accent">算清账了</span></h2>
+            <ul class="point-list">
+                <li class="reveal"><strong>储蓄率持续走高</strong> — 年轻人开始主动控制非必要支出</li>
+                <li class="reveal"><strong>"平替"成为热词</strong> — 不是买不起，是不愿再交智商税</li>
+                <li class="reveal"><strong>二手交易平台用户量暴增</strong> — "反向消费"从小众走向主流</li>
+            </ul>
+            <p class="highlight reveal">年轻人不是没钱，是终于学会了区分"需要"和"想要"。</p>
+        </div>
+    </section>
+
+    <!-- Slide 6: Japan Reference -->
+    <section class="slide quote-slide">
+        <div class="slide-content">
+            <blockquote class="reveal">
+                当一代人经历了经济泡沫的破灭，<br>
+                他们会本能地收缩欲望，<br>
+                追求更<span class="accent">本质</span>的东西。
+            </blockquote>
+            <cite class="reveal">—— 大前研一《低欲望社会》</cite>
+            <p class="reveal" style="margin-top: 1rem; color: var(--text-secondary);">这和当下的中国何其相似。</p>
+        </div>
+    </section>
+
+    <!-- Slide 7: Three Investments -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">三个真正该<span class="accent">花钱</span>的地方</h2>
+            <p class="reveal">降级不是目的，升级生活才是。</p>
+            <div class="investment-grid">
+                <div class="investment-card reveal">
+                    <div class="icon">⏱️</div>
+                    <h3>为时间付费</h3>
+                    <p>能外包的家务外包，能自动化的工作自动化。你的时间比省下的那点钱值钱一百倍。</p>
+                </div>
+                <div class="investment-card reveal">
+                    <div class="icon">💪</div>
+                    <h3>为健康投资</h3>
+                    <p>体检、运动、睡眠——这些现在看起来"贵"的投入，将来都是最划算的保险。</p>
+                </div>
+                <div class="investment-card reveal">
+                    <div class="icon">❤️</div>
+                    <h3>为关系买单</h3>
+                    <p>请朋友吃顿好的，带父母出去旅行。人际关系带来的幸福感，任何奢侈品都比不了。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 8: Final -->
+    <section class="slide final-slide">
+        <div class="slide-content">
+            <h2 class="reveal">消费降级不是妥协，是<span class="accent">清醒</span>。</h2>
+            <p class="final-message reveal">真正的精致，从来不需要靠logo来证明。</p>
+            <p class="question reveal">你最近一笔最值的消费是什么？</p>
+            <p class="reveal" style="color: var(--text-secondary);">如果重来，你会把钱花在哪？</p>
+            <p class="brand reveal">小红书内容工厂 · 2026-03-01</p>
+        </div>
+    </section>
+
+    <script>
+        class SlidePresentation {
+            constructor() {
+                this.slides = document.querySelectorAll('.slide');
+                this.currentSlide = 0;
+                this.totalSlides = this.slides.length;
+                this.progressBar = document.getElementById('progressBar');
+                this.navDotsContainer = document.getElementById('navDots');
+                this.isScrolling = false;
+                
+                this.init();
+            }
+
+            init() {
+                this.createNavDots();
+                this.setupIntersectionObserver();
+                this.setupKeyboardNavigation();
+                this.setupTouchNavigation();
+                this.updateProgress();
+            }
+
+            createNavDots() {
+                this.slides.forEach((_, index) => {
+                    const dot = document.createElement('div');
+                    dot.className = 'nav-dot' + (index === 0 ? ' active' : '');
+                    dot.addEventListener('click', () => this.goToSlide(index));
+                    this.navDotsContainer.appendChild(dot);
+                });
+                this.navDots = document.querySelectorAll('.nav-dot');
+            }
+
+            setupIntersectionObserver() {
+                const observerOptions = {
+                    root: null,
+                    rootMargin: '0px',
+                    threshold: 0.5
+                };
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            const index = Array.from(this.slides).indexOf(entry.target);
+                            this.currentSlide = index;
+                            this.updateNavDots();
+                            this.updateProgress();
+                        }
+                    });
+                }, observerOptions);
+
+                this.slides.forEach(slide => observer.observe(slide));
+            }
+
+            setupKeyboardNavigation() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
+                        e.preventDefault();
+                        this.nextSlide();
+                    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        this.prevSlide();
+                    } else if (e.key === 'Home') {
+                        e.preventDefault();
+                        this.goToSlide(0);
+                    } else if (e.key === 'End') {
+                        e.preventDefault();
+                        this.goToSlide(this.totalSlides - 1);
+                    }
+                });
+            }
+
+            setupTouchNavigation() {
+                let touchStartY = 0;
+                let touchEndY = 0;
+
+                document.addEventListener('touchstart', (e) => {
+                    touchStartY = e.changedTouches[0].screenY;
+                }, { passive: true });
+
+                document.addEventListener('touchend', (e) => {
+                    touchEndY = e.changedTouches[0].screenY;
+                    this.handleSwipe(touchStartY, touchEndY);
+                }, { passive: true });
+            }
+
+            handleSwipe(startY, endY) {
+                const threshold = 50;
+                const diff = startY - endY;
+
+                if (Math.abs(diff) > threshold) {
+                    if (diff > 0) {
+                        this.nextSlide();
+                    } else {
+                        this.prevSlide();
+                    }
+                }
+            }
+
+            goToSlide(index) {
+                if (index >= 0 && index < this.totalSlides) {
+                    this.slides[index].scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+
+            nextSlide() {
+                if (this.currentSlide < this.totalSlides - 1) {
+                    this.goToSlide(this.currentSlide + 1);
+                }
+            }
+
+            prevSlide() {
+                if (this.currentSlide > 0) {
+                    this.goToSlide(this.currentSlide - 1);
+                }
+            }
+
+            updateNavDots() {
+                this.navDots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === this.currentSlide);
+                });
+            }
+
+            updateProgress() {
+                const progress = ((this.currentSlide + 1) / this.totalSlides) * 100;
+                this.progressBar.style.width = progress + '%';
+            }
+        }
+
+        // Initialize
+        new SlidePresentation();
+    </script>
+</body>
+</html>
