@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>情绪稳定？不过是职场让你免费加班的新话术</title>
+    <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@400,600,700&f[]=satoshi@400,500,700&display=swap">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --accent: #ff3366;
+            --accent-glow: rgba(255, 51, 102, 0.4);
+            --accent-secondary: #00d4aa;
+            
+            --font-display: 'Clash Display', sans-serif;
+            --font-body: 'Satoshi', sans-serif;
+            
+            --title-size: clamp(1.75rem, 5vw, 4rem);
+            --subtitle-size: clamp(1rem, 2.5vw, 1.5rem);
+            --body-size: clamp(0.875rem, 1.5vw, 1.125rem);
+            --small-size: clamp(0.75rem, 1.2vw, 0.875rem);
+            
+            --slide-padding: clamp(1.5rem, 5vw, 4rem);
+            --content-gap: clamp(1rem, 2.5vw, 2rem);
+            
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration-normal: 0.7s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
+            height: 100%;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            height: 100%;
+            line-height: 1.6;
+        }
+
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: var(--slide-padding);
+        }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-height: 100%;
+            overflow: hidden;
+            max-width: min(90vw, 1000px);
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Background Effects */
+        .gradient-bg {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 80%, rgba(255, 51, 102, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(0, 212, 170, 0.1) 0%, transparent 50%),
+                var(--bg-primary);
+            z-index: -2;
+        }
+
+        .noise-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-family: var(--font-display);
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: var(--title-size);
+            margin-bottom: var(--content-gap);
+        }
+
+        h2 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            margin-bottom: calc(var(--content-gap) * 0.75);
+            color: var(--accent);
+        }
+
+        h3 {
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            margin-bottom: calc(var(--content-gap) * 0.5);
+        }
+
+        p {
+            font-size: var(--body-size);
+            color: var(--text-secondary);
+            margin-bottom: calc(var(--content-gap) * 0.5);
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .accent-text {
+            color: var(--accent-secondary);
+        }
+
+        /* Title Slide */
+        .title-slide {
+            text-align: center;
+        }
+
+        .title-slide h1 {
+            background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .title-slide .subtitle {
+            font-size: var(--subtitle-size);
+            color: var(--text-secondary);
+            margin-bottom: calc(var(--content-gap) * 1.5);
+        }
+
+        .tagline {
+            font-size: var(--body-size);
+            color: var(--accent-secondary);
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        /* Content Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: clamp(1rem, 3vw, 2rem);
+            margin-bottom: var(--content-gap);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+            gap: clamp(0.75rem, 2vw, 1.5rem);
+        }
+
+        .card-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: clamp(1rem, 2.5vw, 1.5rem);
+        }
+
+        .card-item h4 {
+            font-family: var(--font-display);
+            font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-item p {
+            font-size: var(--small-size);
+            margin-bottom: 0;
+        }
+
+        /* Lists */
+        .bullet-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.5rem, 1.5vw, 0.75rem);
+        }
+
+        .bullet-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            font-size: var(--body-size);
+            color: var(--text-secondary);
+        }
+
+        .bullet-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* Quote */
+        .quote-block {
+            border-left: 3px solid var(--accent);
+            padding-left: clamp(1rem, 3vw, 1.5rem);
+            margin: var(--content-gap) 0;
+        }
+
+        .quote-block p {
+            font-size: clamp(1rem, 2.5vw, 1.35rem);
+            font-style: italic;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .quote-block cite {
+            font-size: var(--small-size);
+            color: var(--text-secondary);
+            font-style: normal;
+        }
+
+        /* Stats */
+        .stat-box {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            margin: var(--content-gap) 0;
+        }
+
+        .stat-number {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: var(--body-size);
+            color: var(--text-secondary);
+        }
+
+        /* CTA Section */
+        .cta-box {
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.1) 0%, rgba(0, 212, 170, 0.05) 100%);
+            border: 1px solid rgba(255, 51, 102, 0.2);
+            border-radius: 16px;
+            padding: clamp(1.5rem, 4vw, 2.5rem);
+            text-align: center;
+        }
+
+        .cta-box h3 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        /* Navigation */
+        .nav-dots {
+            position: fixed;
+            right: clamp(1rem, 3vw, 2rem);
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            z-index: 100;
+        }
+
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s var(--ease-out-expo);
+        }
+
+        .nav-dot.active {
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+            transform: scale(1.3);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+            z-index: 100;
+            transition: width 0.3s ease;
+        }
+
+        /* Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity var(--duration-normal) var(--ease-out-expo),
+                        transform var(--duration-normal) var(--ease-out-expo);
+        }
+
+        .slide.visible .reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal:nth-child(1) { transition-delay: 0.1s; }
+        .reveal:nth-child(2) { transition-delay: 0.2s; }
+        .reveal:nth-child(3) { transition-delay: 0.3s; }
+        .reveal:nth-child(4) { transition-delay: 0.4s; }
+        .reveal:nth-child(5) { transition-delay: 0.5s; }
+
+        /* Responsive */
+        @media (max-height: 700px) {
+            :root {
+                --slide-padding: clamp(1rem, 3vw, 2.5rem);
+                --content-gap: clamp(0.75rem, 2vw, 1.25rem);
+            }
+            
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-height: 600px) {
+            :root {
+                --slide-padding: clamp(0.75rem, 2.5vw, 1.5rem);
+                --content-gap: clamp(0.5rem, 1.5vw, 1rem);
+            }
+            
+            .nav-dots {
+                display: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            .reveal {
+                transition: opacity 0.3s ease;
+                transform: none;
+            }
+            
+            html {
+                scroll-behavior: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <nav class="nav-dots" id="navDots"></nav>
+
+    <!-- Slide 1: Title -->
+    <section class="slide title-slide">
+        <div class="gradient-bg"></div>
+        <div class="noise-overlay"></div>
+        <div class="slide-content">
+            <p class="tagline reveal">小红书内容工厂 · 职场观察</p>
+            <h1 class="reveal">情绪稳定？<br>不过是职场让你<br>免费加班的新话术</h1>
+            <p class="subtitle reveal">当"情绪稳定"变成招聘要求，我们失去了什么</p>
+        </div>
+    </section>
+
+    <!-- Slide 2: The Problem -->
+    <section class="slide">
+        <div class="gradient-bg"></div>
+        <div class="noise-overlay"></div>
+        <div class="slide-content">
+            <h2 class="reveal">你有没有发现...</h2>
+            <div class="card reveal">
+                <p>现在的招聘JD里开始出现一个诡异的要求——<span class="highlight">"情绪稳定"</span>。</p>
+                <p>不是抗压能力，不是情商高，是情绪稳定。好像一个人有喜怒哀乐是什么职业缺陷似的。</p>
+            </div>
+            <ul class="bullet-list reveal">
+                <li>领导深夜在工作群发飙，你要"情绪稳定"地回复收到</li>
+                <li>客户无理取闹改需求，你要"情绪稳定"地微笑服务</li>
+                <li>同事甩锅推责，你要"情绪稳定"地配合演出</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Slide 3: Core Argument -->
+    <section class="slide">
+        <div class="gradient-bg"></div>
+        <div class="noise-overlay"></div>
+        <div class="slide-content">
+            <div class="quote-block reveal">
+                <p>情绪稳定不是美德，<br>是你在免费加班。</p>
+            </div>
+            <p class="reveal">这四个字正在变成职场PUA的最新武器。它要求你压抑真实的情感反应，全天候维持一种"专业"的表演状态——而这份表演，<span class="highlight">没人付你加班费</span>。</p>
+        </div>
+    </section>
+
+    <!-- Slide 4: What is Emotional Labor -->
+    <section class="slide">
+        <div class="gradient-bg"></div>
+        <div class="noise-overlay"></div>
+        <div class="slide-content">
+            <h2 class="reveal">情绪劳动：被隐藏的第三班</h2>
+            <p class="reveal">1983年，美国社会学家<span class="accent-text">霍赫希尔德</span>（Arlie Russell Hochschild）在《被管理的心》里提出了这个概念。</p>
+            <div class="card reveal">
+                <p>她研究空姐时发现，这些女性不仅要完成端茶倒水的体力劳动，还要<span class="highlight">时刻保持微笑、耐心、温柔</span>——不管她们真实的心情如何。</p>
+            </div>
+            <p class="reveal"><strong>情绪劳动的本质：</strong>为了薪水，你必须管理自己的情绪表达，假装出组织要求的情感状态。</p>
+        </div>
+    </section>
+
+    <!-- Slide 5: Two Strategies -->
+    <section class="slide">
+        <div class="gradient-bg"></div>
+        <div class="noise-overlay"></div>
+        <div class="slide-content">
+            <h2 class="reveal">两种表演策略</h2>
+            <div class="card-grid">
+                <div class="card-item reveal">
+                    <h4>表层扮演</h4>
+                    <p>心里骂娘，脸上陪笑。真实感受和外在表现是割裂的。这种"心口不一"最累人，心理学上叫"情绪失调"。</p>
+                </div>
+                <div class="card-item reveal">
+                    <h4>深层扮演</h4>
+                    <p>通过自我说服，真的让自己相信"客户就是上帝"。这更可怕，因为你在系统性地改造自己的情感反应模式。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 6: The Cost -->
+    <section class="slide">
+        <div class="gradient-bg"></div>
+        <div class="noise-overlay"></div>
+        <div class="slide-content">
+            <h2 class="reveal">情绪劳动正在吞噬你的认知资源</h2>
+            <div class="stat-box reveal">
+                <span class="stat-number">47%</span>
+                <span class="stat-label">更高的情绪耗竭概率</span>
+            </div>
+            <p class="reveal">《职业健康心理学杂志》（Journal of Occupational Health Psychology, 2019）的元分析研究显示，高情绪劳动需求的职业（客服、销售、医护），员工出现情绪耗竭的概率比普通岗位高出47%。</p>
+            <p class="reveal">因为你的大脑是单线程的。当你一边处理工作邮件，一边压抑愤怒时，你的<span class="highlight">意志力资源正在被消耗</span>——而这些资源本可以用来深度思考。</p>
+        </div>
+    </section>
+
+    <!-- Slide 7: Gender Aspect -->
+    <section class="slide">
+        <div class="gradient-bg"></div>
+        <div class="noise-overlay"></div>
+        <div class="slide-content">
+            <h2 class="reveal">更讽刺的是...</h2>
+            <div class="card reveal">
+                <p>情绪劳动最大的受害者往往是<span class="highlight">女性</span>。</p>
+            </div>
+            <p class="reveal">霍赫希尔德的研究发现，服务业要求女性"天然"地温柔体贴，好像这是她们的生理本能，而不是需要付出努力的工作。</p>
+            <p class="reveal">这种<span class="accent-text">性别化的情绪劳动期待</span>，让女性在职场承担了隐形的双重负担。</p>
+        </div>
+    </section>
+
+    <!-- Slide 8: Commodification -->
+    <section class="slide">
+        <div class="gradient-bg"></div>
+        <div class="noise-overlay"></div>
+        <div class="slide-content">
+            <h2 class="reveal">情绪劳动被商品化的今天</h2>
+            <p class="reveal">你有没有想过，为什么现在<span class="highlight">"情绪价值"</span>这个词这么火？</p>
+            <div class="card reveal">
+                <p>因为情绪已经被彻底商品化了。从客服的微笑服务，到网红的"宠粉"人设，再到职场里的"高情商"要求——<span class="highlight">你的情绪不再是你自己的，是公司的资产</span>。</p>
+            </div>
+            <p class="reveal">举个例子：你刚被领导骂完，眼眶都红了，这时候客户电话进来，你必须在3秒内切换到"专业微笑模式"。这不是能力，这是<span class="accent-text">系统对你情绪主权的征用</span>。</p>
+        </div>
+    </section>
+
+    <!-- Slide 9: 24/7 Performance -->
+    <section class="slide">
+        <div class="gradient-bg"></div>
+        <div class="noise-overlay"></div>
+        <div class="slide-content">
+            <h2 class="reveal">表演没有下班时间</h2>
+            <p class="reveal">微信工作群24小时在线，钉钉随时可能弹出消息，你的情绪劳动从办公室延伸到了<span class="highlight">卧室、地铁、周末</span>。</p>
+            <div class="quote-block reveal">
+                <p>所谓"情绪稳定"，<br>就是要求你全天候待命，<br>随时准备进入表演状态。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 10: Solutions -->
+    <section class="slide">
+        <div class="gradient-bg"></div>
+        <div class="noise-overlay"></div>
+        <div class="slide-content">
+            <h2 class="reveal">怎么办？建立情绪边界</h2>
+            <div class="card-grid">
+                <div class="card-item reveal">
+                    <h4>01 识别代价</h4>
+                    <p>当你感到莫名其妙地疲惫、对工作失去热情——可能不是懒，是情绪耗竭。承认这一点，停止自我攻击。</p>
+                </div>
+                <div class="card-item reveal">
+                    <h4>02 区分边界</h4>
+                    <p>基本的职业素养是需要的，但如果一份工作要求你牺牲尊严、忍受辱骂——那不是情绪稳定，是情绪剥削。</p>
+                </div>
+                <div class="card-item reveal">
+                    <h4>03 建立边界</h4>
+                    <p>下班时间不回工作消息，不是不敬业，是自我保护。拒绝不合理的情绪要求，不是情商低，是自我尊重。</p>
+                </div>
+                <div class="card-item reveal">
+                    <h4>04 找回所有权</h4>
+                    <p>你的喜怒哀乐是你自己的。公司有权利要求你完成工作任务，但没有权利拥有你的情感世界。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 11: Conclusion -->
+    <section class="slide">
+        <div class="gradient-bg"></div>
+        <div class="noise-overlay"></div>
+        <div class="slide-content">
+            <h2 class="reveal">写在最后</h2>
+            <p class="reveal">下次有人跟你说"你要情绪稳定"，不妨反问一句：<span class="highlight">"那我的情绪劳动，算加班费吗？"</span></p>
+            <div class="card reveal">
+                <p>职场不是修道院，我们不需要修炼到无悲无喜。有愤怒、有委屈、有不满，这是<span class="accent-text">正常人该有的反应</span>。</p>
+            </div>
+            <div class="quote-block reveal">
+                <p>你可以配合表演，<br>但别忘了自己是谁。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 12: CTA -->
+    <section class="slide title-slide">
+        <div class="gradient-bg"></div>
+        <div class="noise-overlay"></div>
+        <div class="slide-content">
+            <div class="cta-box reveal">
+                <h3>你被要求"情绪稳定"的时候，心里在想什么？</h3>
+                <p>评论区说出你的故事<br>点赞最高的三位送《被管理的心》电子版</p>
+            </div>
+            <p class="tagline reveal" style="margin-top: 2rem;">小红书内容工厂 · 2026.03.02</p>
+        </div>
+    </section>
+
+    <script>
+        class SlidePresentation {
+            constructor() {
+                this.slides = document.querySelectorAll('.slide');
+                this.currentSlide = 0;
+                this.totalSlides = this.slides.length;
+                this.navDots = document.getElementById('navDots');
+                this.progressBar = document.getElementById('progressBar');
+                
+                this.init();
+            }
+
+            init() {
+                this.createNavDots();
+                this.bindEvents();
+                this.updateProgress();
+                this.observeSlides();
+            }
+
+            createNavDots() {
+                this.slides.forEach((_, index) => {
+                    const dot = document.createElement('div');
+                    dot.className = 'nav-dot';
+                    dot.addEventListener('click', () => this.goToSlide(index));
+                    this.navDots.appendChild(dot);
+                });
+            }
+
+            bindEvents() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
+                        e.preventDefault();
+                        this.nextSlide();
+                    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        this.prevSlide();
+                    } else if (e.key === 'Home') {
+                        e.preventDefault();
+                        this.goToSlide(0);
+                    } else if (e.key === 'End') {
+                        e.preventDefault();
+                        this.goToSlide(this.totalSlides - 1);
+                    }
+                });
+
+                let touchStartY = 0;
+                document.addEventListener('touchstart', (e) => {
+                    touchStartY = e.touches[0].clientY;
+                });
+
+                document.addEventListener('touchend', (e) => {
+                    const touchEndY = e.changedTouches[0].clientY;
+                    const diff = touchStartY - touchEndY;
+                    if (Math.abs(diff) > 50) {
+                        if (diff > 0) this.nextSlide();
+                        else this.prevSlide();
+                    }
+                });
+
+                let wheelTimeout;
+                document.addEventListener('wheel', (e) => {
+                    if (wheelTimeout) return;
+                    wheelTimeout = setTimeout(() => {
+                        wheelTimeout = null;
+                    }, 800);
+
+                    if (e.deltaY > 0) this.nextSlide();
+                    else this.prevSlide();
+                });
+            }
+
+            goToSlide(index) {
+                if (index < 0 || index >= this.totalSlides) return;
+                this.slides[index].scrollIntoView({ behavior: 'smooth' });
+            }
+
+            nextSlide() {
+                this.goToSlide(this.currentSlide + 1);
+            }
+
+            prevSlide() {
+                this.goToSlide(this.currentSlide - 1);
+            }
+
+            updateProgress() {
+                const progress = ((this.currentSlide + 1) / this.totalSlides) * 100;
+                this.progressBar.style.width = `${progress}%`;
+                
+                document.querySelectorAll('.nav-dot').forEach((dot, index) => {
+                    dot.classList.toggle('active', index === this.currentSlide);
+                });
+            }
+
+            observeSlides() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            this.currentSlide = Array.from(this.slides).indexOf(entry.target);
+                            this.updateProgress();
+                        }
+                    });
+                }, { threshold: 0.5 });
+
+                this.slides.forEach(slide => observer.observe(slide));
+            }
+        }
+
+        new SlidePresentation();
+    </script>
+</body>
+</html>

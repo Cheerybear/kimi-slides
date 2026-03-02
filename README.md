@@ -16,6 +16,9 @@
 
 ## 内容索引
 
+### 2026-03-02
+- [情绪稳定？不过是职场让你免费加班的新话术](./2026-03-02-qingxuelaodong.html) ([文章](./articles/2026-03-02-qingxuelaodong.md))
+
 ### 2026-03-01
 - [不是没钱了，是你终于醒了：消费降级的真相](./2026-03-01-xiaofeijiangji.html) ([文章](./articles/2026-03-01-xiaofeijiangji.md))
 
